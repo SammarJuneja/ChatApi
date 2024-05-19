@@ -48,6 +48,7 @@ app.post("/signup", async (req, res) => {
 });
 
 //test
+//ok
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
     console.log("MongoDB is connected successfully");
