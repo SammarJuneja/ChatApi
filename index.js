@@ -54,6 +54,7 @@ app.get("/login", async (req, res) => {
 //test
 //ok
 
+// you should put this in a try catch block
 mongoose.connect(process.env.MONGODB_URI).then(() => {
     console.log("MongoDB is connected successfully");
     app.listen(process.env.PORT || 3000, () => {
