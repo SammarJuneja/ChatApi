@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "devDependencies": {
-    "nodemon": "^2.0.15"
   },
   "scripts": {
     "start": "node index.js",
