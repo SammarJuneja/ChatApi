@@ -1,6 +1,6 @@
 {
   "name": "chatapi_v2",
-  "description": "",
+  "description": "This is the chat app api",
   "version": "1.0.0",
   "main": "index.js",
   "devDependencies": {
