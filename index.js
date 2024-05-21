@@ -31,10 +31,19 @@ app.post("/signup", async (req, res) => {
   }
   
   try {
+    const encryption = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    
+    const token = jwt.sign({
+      id: newUser._id,
+      email: email
+    }, process.env.JWT_TOKEN);
+  
   const newUser = new user({
     username,
     email,
-    password
+    password: hashedPassword,
+    token: token
   });
   
   await newUser.save();

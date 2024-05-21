@@ -31,6 +31,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "Just joined"
     }
+    token: {
+      type: String,
+      required: true
+      unique: true
+    }
 });
 
 const user = mongoose.model("User", userSchema);
