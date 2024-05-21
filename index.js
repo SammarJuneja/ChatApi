@@ -45,13 +45,14 @@ app.post("/signup", async (req, res) => {
   
   await newUser.save();
   
-  const token = jwt.sign({
+  const token = await jwt.sign({
       id: newUser._id,
       email: newUser.email
     }, process.env.JWT_TOKEN);
   
   res.status(200).json({
-    success: "User registered successfully"
+    success: "User registered successfully",
+    token: token
   });
   } catch(error) {
     res.status(500).json({
@@ -87,7 +88,7 @@ app.post("/login", async (req, res) => {
   }
   
   const token = jwt.sign({
-    username: usr.username,
+    id: usr._id,
     email: usr.email
   }, process.env.JWT_TOKEN);
   
