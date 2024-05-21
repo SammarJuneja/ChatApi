@@ -88,12 +88,12 @@ app.post("/login", async (req, res) => {
   }
   
   const token = jwt.sign({
-    username: username,
+    username: usr.username
     email: email
   }, process.env.JWT_TOKEN);
   
   res.status(200).json({
-    success: `You are logged in as ${username}`,
+    success: `You are logged in as ${usr.username}`,
     token: token
   });
 });
