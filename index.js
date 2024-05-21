@@ -1,5 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+comst jwt = require("jsonwebtoken");
 const app = express();
 require("dotenv").config();
 const user = require("./Schemas/user.js");
@@ -32,6 +34,7 @@ app.post("/signup", async (req, res) => {
   
   try {
     const encryption = await bcrypt.genSalt(10);
+    
     const hashedPassword = await bcrypt.hash(password, salt);
     
     const token = jwt.sign({
