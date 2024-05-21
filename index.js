@@ -41,7 +41,7 @@ app.post("/signup", async (req, res) => {
     success: "User registered successfully"
   });
   } catch(error) {
-    res.status(400).json({
+    res.status(500).json({
       error: error
     });
   }
