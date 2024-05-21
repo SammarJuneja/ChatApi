@@ -62,18 +62,53 @@ app.post("/signup", async (req, res) => {
 });
 
 app.get("/login", async (req, res) => {
-  res.send("no");
+  const { email, password } = req.body;
+  
+  if (!email || !password) {
+    return res.status(400).json({
+      error: "Please fill both email and password"
+    });
+  }
+  
+  const usr = await user.find({
+    email
+  });
+  
+  if (!user) {
+    return res.status(400).json({
+      error: `User with email "${email}" doesn't exist`
+    });
+  }
+  
+  const pass = await bcrypt.compare(password, user.password)
+  if (!pass) {
+    return res.status(400).json({
+      error: "Invalid password"
+    });
+  }
+  
+  const token = jwt.sign({
+    username: username,
+    email: email
+  }, process.env.JWT_TOKEN);
+  
+  res.status(200).json({
+    success: `You are logged in as ${username}`,
+    token: token
+  });
 });
 
-//test
-//ok
-
-// you should put this in a try catch block
+try {
 mongoose.connect(process.env.MONGODB_URI).then(() => {
     console.log("MongoDB is connected successfully");
     app.listen(process.env.PORT || 3000, () => {
         console.log(`App is running on port https://localhost:${process.env.PORT || 3000}`);
     });
 });
+} catch (error) {
+  res.status(400).json({
+    error: error.message
+  });
+}
 
 module.exports = app;
