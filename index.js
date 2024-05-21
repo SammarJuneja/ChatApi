@@ -70,7 +70,7 @@ app.post("/login", async (req, res) => {
     });
   }
   
-  const usr = await user.find({
+  const usr = await user.findOne({
     email
   });
   
