@@ -57,7 +57,10 @@ app.get("/login", async (req, res) => {
 //ok
 
 // you should put this in a try catch block
-mongoose.connect(process.env.MONGODB_URI).then(() => {
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
     console.log("MongoDB is connected successfully");
     app.listen(process.env.PORT || 3000, () => {
         console.log(`App is running on port https://localhost:${process.env.PORT || 3000}`);
