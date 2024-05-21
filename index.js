@@ -58,7 +58,6 @@ app.get("/login", async (req, res) => {
 
 // you should put this in a try catch block
 mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
     console.log("MongoDB is connected successfully");
