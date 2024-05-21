@@ -51,8 +51,7 @@ app.post("/signup", async (req, res) => {
     }, process.env.JWT_TOKEN);
   
   res.status(200).json({
-    success: "User registered successfully",
-    token: token
+    success: "User registered successfully"
   });
   } catch(error) {
     res.status(500).json({
