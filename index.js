@@ -47,7 +47,7 @@ app.post("/signup", async (req, res) => {
   
   const token = jwt.sign({
       id: newUser._id,
-      email: email
+      email: newUser.email
     }, process.env.JWT_TOKEN);
   
   res.status(200).json({

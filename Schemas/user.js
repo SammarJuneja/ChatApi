@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
     bio: {
         type: String,
         default: "Just joined"
-    },
+    }
 });
 
 const user = mongoose.model("User", userSchema);
