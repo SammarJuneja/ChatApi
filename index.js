@@ -4,6 +4,8 @@ const app = express();
 require("dotenv").config();
 const User = require("./Schemas/user.js");
 
+app.use(express.json());
+
 app.get("/", (req, res) => {
     res.send("hello world");
 });
