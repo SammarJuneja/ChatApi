@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 require("dotenv").config();
-const User = require("./Schemas/user.js");
+const user = require("./Schemas/user.js");
 
 app.use(express.json());
 
@@ -20,18 +20,18 @@ app.post("/signup", async (req, res) => {
     });
   }
   
-  const user = await User.findOne({
+  const usr = await user.findOne({
     email: req.body.email
   });
   
-  if (user) {
+  if (usr) {
     return res.status(400).json({
       error: "The email your entered is already used"
     });
   }
   
   try {
-  const newUser = new User({
+  const newUser = new user({
     username,
     email,
     password
