@@ -99,12 +99,11 @@ app.post("/login", async (req, res) => {
   });
 });
 
-app.get("/user:id", authorizatonToken, async (req, res) => {
+app.get("/user/:id", authorizatonToken, async (req, res) => {
+  /*
     if (req.params.id === "@me") {
       try {
-      const usr = await user.findOne({
-        
-      }).select({
+      const usr = await user.findById(req.params.id).select({
         password: -1
       });
       
@@ -122,11 +121,9 @@ app.get("/user:id", authorizatonToken, async (req, res) => {
           error: error.message
         });
       }
-    } else {
+    } else {*/
     try {
-  const usr = await user.findOne({
-    req.params.id
-  }).select({
+  const usr = await user.findById(req.params.id).select({
     password: -1
   });
   
@@ -144,8 +141,8 @@ app.get("/user:id", authorizatonToken, async (req, res) => {
       error: error.message
     });
   }
-    }
-})
+  //  }
+});
 
 try {
 mongoose.connect(process.env.MONGODB_URI).then(() => {
