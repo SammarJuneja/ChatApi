@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
     res.send("hello world");
 });
 
-// SignUp endpoint
+// SignUp 
 app.post("/signup", async (req, res) => {
   const { username, email, password } = req.body;
   
@@ -62,6 +62,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+// Login
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   
@@ -99,10 +100,13 @@ app.post("/login", async (req, res) => {
   });
 });
 
+// User
 app.get("/user/:id", authorizatonToken, async (req, res) => {
     try {
-  const usr = await user.findById(req.params.id).select({
-    password: -1
+  const usr = await user.findOne({
+    id: req.params.id
+  }).select({
+    password: 0
   });
   
   if (!usr) {
