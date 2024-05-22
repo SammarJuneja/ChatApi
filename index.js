@@ -109,6 +109,8 @@ app.get("/user/:id", authorizatonToken, async (req, res) => {
     password: 0
   });
   
+  console.log(usr)
+  
   if (!usr) {
     return res.status(404).json({
       error: "User not found"
