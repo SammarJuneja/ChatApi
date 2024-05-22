@@ -100,28 +100,6 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/user/:id", authorizatonToken, async (req, res) => {
-  /*
-    if (req.params.id === "@me") {
-      try {
-      const usr = await user.findById(req.params.id).select({
-        password: -1
-      });
-      
-      if (!usr) {
-        return res.status(404).json({
-          error: "User not found"
-        });
-      }
-      
-      res.status(200).json({
-        user: usr
-      });
-      } catch (error) {
-        res.status(500).json({
-          error: error.message
-        });
-      }
-    } else {*/
     try {
   const usr = await user.findById(req.params.id).select({
     password: -1
@@ -141,7 +119,6 @@ app.get("/user/:id", authorizatonToken, async (req, res) => {
       error: error.message
     });
   }
-  //  }
 });
 
 try {
