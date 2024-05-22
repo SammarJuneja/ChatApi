@@ -106,7 +106,7 @@ app.get("/user/:id", authorizatonToken, async (req, res) => {
   const usr = await user.findOne({
     id: req.params.id
   }).select({
-    password: 0
+    password: -1
   });
   
   console.log(usr)
