@@ -1,0 +1,53 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: rgb(45, 45, 99);
+    }
+    header {
+        color: white;
+        text-align: center;
+        position: sticky;
+        padding: 1px;
+        border-bottom: 1px solid gray;
+        font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
+        background-color: rgb(21, 14, 67);
+    }
+    h1 {
+        text-align: center;
+        color: black;
+        font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
+        margin-bottom: 5px;
+    }
+    a {
+        text-decoration: none;
+        color: white;
+        font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
+    }
+    .endpoints {
+        display: grid;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+<body>
+    <header>
+        <h2>Welcome to the ChatApi</h2>
+    </header>
+    <div >
+        <h1>Endpoints</h1>
+        <div class="endpoints">
+            <a href=""><h3>/signup</h3></a>
+            <a href=""><h3>/login</h3></a>
+            <a href=""><h3>/user/:id</h3></a>
+            <a href=""><h3>/sendmessage/:userid</h3></a>
+        </div>
+    </div>
+</body>
+</html>

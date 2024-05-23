@@ -6,11 +6,12 @@ const app = express();
 require("dotenv").config();
 const authorizatonToken = require("./Authorization.js");
 const user = require("./Schemas/user.js");
+const chat = require("./Schemas/chat.js")
 
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.send("hello world");
+    res.sendFile("index.html");
 });
 
 // SignUp 
@@ -125,6 +126,14 @@ app.get("/user/:id", authorizatonToken, async (req, res) => {
       error: error.message
     });
   }
+});
+
+// Send message
+
+app.post("sendmessage/:userid", authorizatonToken, async (req, res) => {
+  const chatGet = chat.findOne({
+    
+  });
 });
 
 try {
