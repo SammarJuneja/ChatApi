@@ -1,12 +1,7 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const app = express();
 const connectDB = require('./Database/index.js');
 require("dotenv").config();
-const authorizatonToken = require("./Authorization.js");
-const user = require("./Database/Models/userModel.js");
-const chat = require("./Database/Models/messageModel.js")
 connectDB();
 
 app.use(express.json());
@@ -16,7 +11,7 @@ const Routes = require('./Routes');
 app.use('/api/v2', Routes);
 
 app.get("/", (req, res) => {
-  res.sendFile("index.html");
+  res.sendFile(__dirname + "/views/index.html");
 });
 
 /* to be moved
