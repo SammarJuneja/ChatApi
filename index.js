@@ -11,97 +11,15 @@ connectDB();
 
 app.use(express.json());
 
+const Routes = require('./Routes');
+
+app.use('/api/v2', Routes);
+
 app.get("/", (req, res) => {
-    res.sendFile("index.html");
+  res.sendFile("index.html");
 });
 
-// SignUp 
-app.post("/signup", async (req, res) => {
-  const { username, email, password } = req.body;
-  
-  if (!username || !email || !password) {
-    return res.status(400).json({
-      error: "Please fill all details"
-    });
-  }
-  
-  const usr = await user.findOne({
-    email: req.body.email
-  });
-  
-  if (usr) {
-    return res.status(400).json({
-      error: "The email your entered is already used"
-    });
-  }
-  
-  try {
-    const encryption = await bcrypt.genSalt(10);
-    
-    const hashedPassword = await bcrypt.hash(password, encryption);
-  
-  const newUser = new user({
-    username,
-    email,
-    password: hashedPassword
-  });
-  
-  await newUser.save();
-  
-  const token = await jwt.sign({
-      id: newUser._id,
-      email: newUser.email
-    }, process.env.JWT_TOKEN);
-  
-  res.status(200).json({
-    success: "User registered successfully",
-    token: token
-  });
-  } catch(error) {
-    res.status(500).json({
-      error: error
-    });
-  }
-});
-
-// Login
-app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  
-  if (!email || !password) {
-    return res.status(400).json({
-      error: "Please fill both email and password"
-    });
-  }
-  
-  const usr = await user.findOne({
-    email
-  });
-  
-  if (!usr) {
-    return res.status(400).json({
-      error: `User with email "${email}" doesn't exist`
-    });
-  }
-  
-  const pass = await bcrypt.compare(password, usr.password)
-  if (!pass) {
-    return res.status(400).json({
-      error: "Invalid password"
-    });
-  }
-  
-  const token = jwt.sign({
-    id: usr._id,
-    email: usr.email
-  }, process.env.JWT_TOKEN);
-  
-  res.status(200).json({
-    success: `You are logged in as ${usr.username}`,
-    token: token
-  });
-});
-
+/* to be moved
 // User
 app.get("/user/:id", authorizatonToken, async (req, res) => {
     try {
@@ -136,5 +54,6 @@ app.post("sendmessage/:userid", authorizatonToken, async (req, res) => {
     
   });
 });
+// */
 
 module.exports = app;
