@@ -1,12 +1,13 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const app = express();
+const connectDB = require('./Database/index.js');
 require("dotenv").config();
 const authorizatonToken = require("./Authorization.js");
-const user = require("./Schemas/user.js");
-const chat = require("./Schemas/chat.js")
+const user = require("./Database/Models/userModel.js");
+const chat = require("./Database/Models/messageModel.js")
+connectDB();
 
 app.use(express.json());
 
@@ -135,18 +136,5 @@ app.post("sendmessage/:userid", authorizatonToken, async (req, res) => {
     
   });
 });
-
-try {
-mongoose.connect(process.env.MONGODB_URI).then(() => {
-    console.log("MongoDB is connected successfully");
-    app.listen(process.env.PORT || 3000, () => {
-        console.log(`App is running on port https://localhost:${process.env.PORT || 3000}`);
-    });
-});
-} catch (error) {
-  res.status(400).json({
-    error: error.message
-  });
-}
 
 module.exports = app;
