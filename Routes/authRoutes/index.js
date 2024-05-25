@@ -166,7 +166,7 @@ router.post(
   async (req, res) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith('Bearer '))
+  if (!authHeader?.startsWith('Bearer '))
     return res.status(401).json({ message: 'Missing or malformed authorization header' });
 
   const refreshToken = authHeader.split(' ')[1];
@@ -205,7 +205,7 @@ router.post('/password-reset', (req, res) => {});
 router.post('/logout', async (req, res) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith('Bearer '))
+  if (!authHeader?.startsWith('Bearer '))
     return res.status(401).json({ message: 'Missing or malformed authorization header' });
 
   const refreshToken = authHeader.split(' ')[1];
