@@ -79,7 +79,7 @@ router.post(
 
       res.status(200).json({ accessToken, refreshToken });
     } catch (err) {
-      res.status(500).json({ message: 'Internal server error' });
+      res.status(500).json({ message: err });
       console.error(err); // will remove in production env
     }    
   }
