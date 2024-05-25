@@ -25,7 +25,7 @@ const generateRefreshToken = async (user, device) => {
 
 // SECURITY: MUST implement token blacklisting
 //             * blacklist tokens yet to expire of logged out/changed tokens
-
+const strongPasswordReg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{8,}$/;
 router.post(
   '/register',
   [
@@ -54,7 +54,7 @@ router.post(
     body('password')
       .trim().escape()
       .notEmpty().withMessage('Password is required')
-      .matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/)
+      .matches(strongPasswordReg)
       .withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number, and be at least 8 characters long'),
     body('device')
       .trim().escape()
@@ -122,7 +122,7 @@ router.post(
     body('password')
       .trim().escape()
       .notEmpty().withMessage('Password is required')
-      .matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/)
+      .matches(strongPasswordReg)
       .withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number, and be at least 8 characters long'),
     body('device')
       .trim().escape()
