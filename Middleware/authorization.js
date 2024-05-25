@@ -5,7 +5,7 @@ const User = require("../Database/Models/userModel");
 const authenticateJWT = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader?.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'Missing or malformed authorization header' });
   }
 
