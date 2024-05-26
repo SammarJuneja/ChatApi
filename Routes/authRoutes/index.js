@@ -20,7 +20,8 @@ const generateRefreshToken = async (user, device) => {
   const refreshToken = jwt.sign({ userId: user._id }, config.jwt.refreshSecret, { 
     expiresIn: config.jwt.refreshTokenExpiry
   });
-  const savedToken = await new Token({ userId: user._id, token: refreshToken, device }).save();
+  const savedToken = new Token({ userId: user._id, token: refreshToken, device })
+  await savedToken.save();
   return savedToken.token;
 };
 
