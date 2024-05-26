@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { body, validationResult, oneOf } = require('express-validator');
 const config = require('../../config.js');
+const authorization = require("../../Middleware/authorization.js")
 
 const router = Router();
 
@@ -29,6 +30,7 @@ const strongPasswordReg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-])
 
 router.post(
   '/register',
+  authorization
   [
     body('username')
       .trim().escape()
