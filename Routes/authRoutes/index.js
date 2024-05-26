@@ -38,9 +38,7 @@ router.post(
       .isAlphanumeric().withMessage('Username must be alphanumeric')
       .not().contains(' ').withMessage('Username cannot contain spaces')
       .custom(async username => {
-        const user = await User.findOne({
-          username
-        });
+        const user = await User.findOne({ username });
         if (user) {
           throw new Error('User already exists');
         }
@@ -65,6 +63,7 @@ router.post(
       .notEmpty().withMessage('Device is required')
   ],
   async (req, res) => {
+    try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -81,10 +80,10 @@ router.post(
       const refreshToken = generateRefreshToken(user, device);
 
       res.status(200).json({ accessToken, refreshToken });
-    // } catch (err) {
-    //   await res.status(500).json({ message: err.message });
-    //   console.error(err); // will remove in production env
-    // }    
+    } catch (err) {
+      await res.status(500).json({ message: err.message });
+      console.error(err); // will remove in production env
+    }    
   }
 );
 
