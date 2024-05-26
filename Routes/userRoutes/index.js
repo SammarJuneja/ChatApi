@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const config = require('../../config.js');
-const authenticateJWT = require('../../Middleware/Authorization.js');
+const authenticateJWT = require('../../Middleware/authorization.js');
 const User = require('../../Database/Models/userModel.js');
 
 const router = Router();
