@@ -17,7 +17,7 @@ const generateAccessToken = user => {
 };
 
 const generateRefreshToken = async (user, device) => {
-  const refreshToken = jwt.sign({ userId: user._id }, config.jwt.refreshSecret, { 
+  const refreshToken = await jwt.sign({ userId: user._id }, config.jwt.refreshSecret, { 
     expiresIn: config.jwt.refreshTokenExpiry 
   });
   await new Token({ userId: user._id, token: refreshToken, device }).save();
@@ -202,9 +202,11 @@ router.post(
   }
 });
 
-router.post('/password-reset', (req, res) => {});
+router.post('/password-reset', (req, res) => {
 
-router.post('/logout', async (req, res) => {
+});
+
+router.post('/logout', authorization, async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith('Bearer '))
