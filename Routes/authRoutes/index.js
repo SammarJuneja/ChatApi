@@ -17,11 +17,11 @@ const generateAccessToken = user => {
 };
 
 const generateRefreshToken = async (user, device) => {
-  const refreshToken = await jwt.sign({ userId: user._id }, config.jwt.refreshSecret, { 
-    expiresIn: config.jwt.refreshTokenExpiry 
+  const refreshToken = jwt.sign({ userId: user._id }, config.jwt.refreshSecret, { 
+    expiresIn: config.jwt.refreshTokenExpiry
   });
-  await new Token({ userId: user._id, token: refreshToken, device }).save();
-  return refreshToken;
+  const savedToken = await new Token({ userId: user._id, token: refreshToken, device }).save();
+  return savedToken.token;
 };
 
 // SECURITY: MUST implement token blacklisting
