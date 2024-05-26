@@ -26,6 +26,7 @@ const generateRefreshToken = async (user, device) => {
 // SECURITY: MUST implement token blacklisting
 //             * blacklist tokens yet to expire of logged out/changed tokens
 const strongPasswordReg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{8,}$/;
+
 router.post(
   '/register',
   [
@@ -36,7 +37,9 @@ router.post(
       .isAlphanumeric().withMessage('Username must be alphanumeric')
       .not().contains(' ').withMessage('Username cannot contain spaces')
       .custom(async username => {
-        const user = await User.findOne({ username });
+        const user = await User.findOne({
+          username
+        });
         if (user) {
           throw new Error('User already exists');
         }
@@ -79,7 +82,7 @@ router.post(
 
       res.status(200).json({ accessToken, refreshToken });
     } catch (err) {
-      res.status(500).json({ message: err });
+      await res.status(500).json({ message: err.message });
       console.error(err); // will remove in production env
     }    
   }
