@@ -56,26 +56,25 @@ router.post(
 
         if (!passwordCompare) {
             return res.status(400).json({ error: "Incorrect password" })
-        }
-        
+        } else {
         if (username) {
             if (userGet.username === username) {
-                res.status(400).json({ error: "Your new username must be different from old username"});
+                return res.status(400).json({ error: "Your new username must be different from old username"});
             } else {
                 await User.updateOne({ userid }, { username });
                 res.status(200).json({ message: `Username changed to ${username} successfully` });
             }
         }
-
         if (email) {
             if (userGet.email === email) {
-                res.status(400).json({ error: "Your new email must be different from old email"});
+                return res.status(400).json({ error: "Your new email must be different from old email"});
             } else {
                 await User.updateOne({ userid }, { email });
                 res.status(200).json({ message: `Email changed to ${email} successfully` });
             }
         }
-    });
+    }
+});
 
 
 module.exports = router;
