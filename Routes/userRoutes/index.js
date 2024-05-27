@@ -36,6 +36,7 @@ router.post(
         
         if (username) {
             const userGet = await User.findOne({ _id: userid });
+            console.log(userGet, userGet.username, userid)
             if (userGet.username == username) {
                 res.status(400).json({ error: "Your new username must be different from old username"});
             } else {
