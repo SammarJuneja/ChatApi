@@ -1,11 +1,9 @@
 const { Router } = require("express");
 const config = require("../../config.js");
-const authorization = require("../../Middleware/authorization.js");
+const authenticateJWT = require("../../Middleware/authorization.js");
 const User = require("../../Database/Models/userModel.js");
-
 const router = Router();
 
-const strongPasswordReg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{8,}$/;
 
 router.get('users', authenticateJWT, async (req, res) => {
     try {
@@ -15,7 +13,6 @@ router.get('users', authenticateJWT, async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
     }
 });
-
 
 router.post(
     'update-appearance',
@@ -32,7 +29,7 @@ router.post(
         }
     }),
     ],
-    authorization, async (req, res) => {
+    authenticateJWT, async (req, res) => {
         const { username } = req.body;
         const userid = req.user.userId;
         
@@ -46,5 +43,6 @@ router.post(
             }
         }
     });
+    
 
 module.exports = router;
