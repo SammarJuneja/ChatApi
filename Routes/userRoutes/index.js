@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const bcrypt = reqiure("bcrypt");
+const bcrypt = require("bcrypt");
 const config = require("../../config.js");
 const authenticateJWT = require("../../Middleware/authorization.js");
 const { body } = require('express-validator');
