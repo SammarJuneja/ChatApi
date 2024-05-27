@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const config = require("../../config.js");
 const authenticateJWT = require("../../Middleware/authorization.js");
+const { body, validationResult, oneOf } = require('express-validator');
 const User = require("../../Database/Models/userModel.js");
 const router = Router();
 
@@ -29,7 +30,7 @@ router.post(
         }
     }),
     ],
-    authenticateJWT, async (req, res) => {
+    authenticateJWT, async (req, res) => { 
         const { username } = req.body;
         const userid = req.user.userId;
         
@@ -43,6 +44,6 @@ router.post(
             }
         }
     });
-    
+
 
 module.exports = router;
