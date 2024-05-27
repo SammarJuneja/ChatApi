@@ -1,12 +1,12 @@
 const { Router } = require("express");
 const config = require("../../config.js");
 const authenticateJWT = require("../../Middleware/authorization.js");
-const { body, validationResult, oneOf } = require('express-validator');
+const { body } = require('express-validator');
 const User = require("../../Database/Models/userModel.js");
 const router = Router();
 
 
-router.get('users', authenticateJWT, async (req, res) => {
+router.get("/users", authenticateJWT, async (req, res) => {
     try {
       const users = await User.find();
       res.status(200).json({ users });
@@ -16,7 +16,7 @@ router.get('users', authenticateJWT, async (req, res) => {
 });
 
 router.post(
-    'update-appearance',
+    '/update-appearance',
     [
         body("username")
         .trim().escape()
