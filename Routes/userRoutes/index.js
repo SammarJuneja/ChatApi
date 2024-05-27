@@ -59,14 +59,14 @@ router.post(
         }
         
         if (username && userGet.username !== username) {
-            await User.updateOne({ userid }, { username });
+            await User.updateOne({ _id: userid }, { username });
             res.status(200).json({ message: `Username changed to ${username} successfully` });
-            } else if (username) {
+        } else if (username) {
             return res.status(400).json({ error: "Your new username must be different from old username"});
-            }
+        }
             
         if (email && userGet.email !== email) {
-            await User.updateOne({ userid }, { email });
+            await User.updateOne({ _id: userid }, { email });
             res.status(200).json({ message: `Email changed to ${email} successfully` });
         } else if (email) {
             return res.status(400).json({ error: "Your new email must be different from old email"});
