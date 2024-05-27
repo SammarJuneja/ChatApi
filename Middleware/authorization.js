@@ -13,7 +13,7 @@ const authenticateJWT = async (req, res, next) => {
 
 
   if (!token) {
-    return res.status(401).json({ message: `Missing token in authorization header ${token}` });
+    return res.status(401).json({ message: `Missing token in authorization header token - ${token}` });
   }
 
   try {
