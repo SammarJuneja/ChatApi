@@ -6,7 +6,7 @@ const authenticateJWT = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'Missing or malformed authorization header' });
+    return res.status(401).json({ message: 'Missing or malformed authorization header' + authHeader });
   }
 
   const token = authHeader.match(/Bearer (.*)/)[0];
