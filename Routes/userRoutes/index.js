@@ -52,28 +52,25 @@ router.post(
         const userid = req.user.userId;
         const userGet = await User.findOne({ _id: userid });
 
-        const passwordCompare = bcrypt.compare(password, userGet.password);
+        const passwordCompare = await bcrypt.compare(password, userGet.password);
 
         if (!passwordCompare) {
             return res.status(400).json({ error: "Incorrect password" })
-        } else {
-        if (username) {
-            if (userGet.username === username) {
-                return res.status(400).json({ error: "Your new username must be different from old username"});
-            } else {
-                await User.updateOne({ userid }, { username });
-                res.status(200).json({ message: `Username changed to ${username} successfully` });
-            }
         }
-        if (email) {
-            if (userGet.email === email) {
-                return res.status(400).json({ error: "Your new email must be different from old email"});
-            } else {
-                await User.updateOne({ userid }, { email });
-                res.status(200).json({ message: `Email changed to ${email} successfully` });
+        
+        if (username && userGet.username !== username) {
+            await User.updateOne({ userid }, { username });
+            res.status(200).json({ message: `Username changed to ${username} successfully` });
+            } else if (username) {
+            return res.status(400).json({ error: "Your new username must be different from old username"});
             }
+            
+        if (email && userGet.email !== email) {
+            await User.updateOne({ userid }, { email });
+            res.status(200).json({ message: `Email changed to ${email} successfully` });
+        } else if (email) {
+            return res.status(400).json({ error: "Your new email must be different from old email"});
         }
-    }
 });
 
 
