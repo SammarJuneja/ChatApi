@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const { body, validationResult, oneOf } = require('express-validator');
 const config = require('../../config.js');
 const authorization = require("../../Middleware/authorization.js");
-
 const router = Router();
 
 const User = require('../../Database/Models/userModel.js');
