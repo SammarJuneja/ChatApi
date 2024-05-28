@@ -26,10 +26,16 @@ const userSchema = new mongoose.Schema({
         default: Date.now()
     },
     friends: {
-        type: [String]
+        type: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        }]
     },
     groups: {
-        type: [String]
+        type: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Chat'
+        }]
     },
     bio: {
         type: String,
