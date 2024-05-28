@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { body, validationResult, oneOf } = require('express-validator');
 const config = require('../../config.js');
+const authorization = require("../../Middleware/authorization.js");
 
 const router = Router();
 
@@ -17,7 +18,7 @@ const generateAccessToken = user => {
 
 const generateRefreshToken = async (user, device) => {
   const refreshToken = jwt.sign({ userId: user._id }, config.jwt.refreshSecret, { 
-    expiresIn: config.jwt.refreshTokenExpiry 
+    expiresIn: config.jwt.refreshTokenExpiry
   });
   await new Token({ userId: user._id, token: refreshToken, device }).save();
   return refreshToken;
@@ -26,6 +27,7 @@ const generateRefreshToken = async (user, device) => {
 // SECURITY: MUST implement token blacklisting
 //             * blacklist tokens yet to expire of logged out/changed tokens
 const strongPasswordReg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{8,}$/;
+
 router.post(
   '/register',
   [
@@ -75,11 +77,11 @@ router.post(
       const user = await new User({ username, email, password: hashedPassword }).save();
 
       const accessToken = generateAccessToken(user);
-      const refreshToken = generateRefreshToken(user, device);
+      const refreshToken = await generateRefreshToken(user, device);
 
       res.status(200).json({ accessToken, refreshToken });
     } catch (err) {
-      res.status(500).json({ message: err });
+      await res.status(500).json({ message: err.message });
       console.error(err); // will remove in production env
     }    
   }
@@ -145,7 +147,7 @@ router.post(
         return res.status(401).json({ message: 'Invalid credentials' });
 
       const accessToken = generateAccessToken(user);
-      const refreshToken = generateRefreshToken(user, device);
+      const refreshToken = await generateRefreshToken(user, device);
 
       res.status(200).json({ accessToken, refreshToken });
     } catch (err) {
@@ -164,45 +166,49 @@ router.post(
     // gonna check headers here instead of down there
   ], 
   async (req, res) => {
-  const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization;
 
-  if (!authHeader?.startsWith('Bearer '))
-    return res.status(401).json({ message: 'Missing or malformed authorization header' });
+    if (!authHeader?.startsWith('Bearer '))
+      return res.status(401).json({ message: 'Missing or malformed authorization header' });
 
-  const refreshToken = authHeader.split(' ')[1];
-  
-  if (!refreshToken)
-    return res.status(401).json({ message: 'Missing refresh token' });
+    const refreshToken = authHeader.split(' ')[1];
+    
+    if (!refreshToken)
+      return res.status(401).json({ message: 'Missing refresh token' });
 
-  const { device } = req.body;
-  try {
-    const payload = jwt.verify(refreshToken, config.jwt.refreshSecret);
+    const { device } = req.body;
+    try {
+      const payload = jwt.verify(refreshToken, config.jwt.refreshSecret);
 
-    const savedToken = await Token.findOne({ userId: payload.userId, token: refreshToken, device });
-    if (!savedToken)
-      return res.status(401).json({ message: 'Invalid refresh token' });
+      const savedToken = await Token.findOne({ userId: payload.userId, token: refreshToken, device });
+      if (!savedToken)
+        return res.status(401).json({ message: 'Invalid refresh token' });
 
-    const user = await User.findById(payload.userId);
-    const newAccessToken = generateAccessToken(user);
-    const newRefreshToken = await generateRefreshToken(user, device);
+      const user = await User.findById(payload.userId);
+      const newAccessToken = generateAccessToken(user);
+      const newRefreshToken = await generateRefreshToken(user, device);
 
-    res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
-  } catch (err) {
-    if (err instanceof jwt.TokenExpiredError) {
-      await Token.deleteOne({ refreshToken });
-      res.status(401).json({ message: 'Refresh token expired' });
-    } else if (err instanceof jwt.JsonWebTokenError) {
-      res.status(401).json({ message: 'Invalid refresh token' });
-    } else {
-      res.status(500).json({ message: 'Internal Server error' });
+      res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
+    } catch (err) {
+      if (err instanceof jwt.TokenExpiredError) {
+        await Token.deleteOne({ refreshToken });
+        res.status(401).json({ message: 'Refresh token expired' });
+      } else if (err instanceof jwt.JsonWebTokenError) {
+        res.status(401).json({ message: 'Invalid refresh token' });
+      } else {
+        res.status(500).json({ message: 'Internal Server error' });
+      }
+      console.error(err); // will be removed in production env
     }
-    console.error(err); // will be removed in production env
   }
+);
+
+router.post('/password-reset', (req, res) => {
+
 });
 
-router.post('/password-reset', (req, res) => {});
-
-router.post('/logout', async (req, res) => {
+// i have no idea how to implement this for now
+router.post('/logout', authorization, async (req, res) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith('Bearer '))
