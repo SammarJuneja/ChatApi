@@ -183,13 +183,13 @@ router.post(
       
       const payload = jwt.verify(refreshToken, config.jwt.refreshSecret);
       
+      const { device } = req.body;
       const savedToken = await Token.findOne({ userId: payload.userId, token: refreshToken, device });
       if (!savedToken)
         return res.status(401).json({ message: 'Invalid refresh token' });
       
       const user = await User.findById(payload.userId);
       const newAccessToken = generateAccessToken(user);
-      const { device } = req.body;
       const { refreshToken: newRefreshToken, storeToken } = generateRefreshToken(user, device);
       await storeToken();
 
