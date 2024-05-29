@@ -3,11 +3,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { body, validationResult, oneOf } = require('express-validator');
 const config = require('../../config.js');
-const authorization = require("../../Middleware/authorization.js");
 const router = Router();
 
 const User = require('../../Database/Models/userModel.js');
 const Token = require('../../Database/Models/tokenModel.js');
+const blacklistedToken = require('../../Database/Models/blacklistedTokenModel.js');
 
 const generateAccessToken = user => {
   return jwt.sign({ userId: user._id }, config.jwt.accessSecret, {
@@ -15,12 +15,16 @@ const generateAccessToken = user => {
   });
 };
 
-const generateRefreshToken = async (user, device) => {
+const generateRefreshToken = (user, device) => {
   const refreshToken = jwt.sign({ userId: user._id }, config.jwt.refreshSecret, { 
     expiresIn: config.jwt.refreshTokenExpiry
   });
-  await new Token({ userId: user._id, token: refreshToken, device }).save();
-  return refreshToken;
+  return ({ 
+    refreshToken, 
+    storeToken: (async () => {
+      await new Token({ userId: user._id, token: refreshToken, device }).save();
+    })
+  });
 };
 
 // SECURITY: MUST implement token blacklisting
@@ -64,9 +68,8 @@ router.post(
   async (req, res) => {
     try {
       const errors = validationResult(req);
-      if (!errors.isEmpty()) {
+      if (!errors.isEmpty()) 
         return res.status(400).json({ errors: errors.array() });
-      }
 
       const { username, email, password, device } = req.body;
 
@@ -76,7 +79,8 @@ router.post(
       const user = await new User({ username, email, password: hashedPassword }).save();
 
       const accessToken = generateAccessToken(user);
-      const refreshToken = await generateRefreshToken(user, device);
+      const { refreshToken, storeToken } = generateRefreshToken(user, device);
+      await storeToken();
 
       res.status(200).json({ accessToken, refreshToken });
     } catch (err) {
@@ -86,40 +90,39 @@ router.post(
   }
 );
 
-// gonna need /verify for email verification in the future
+router.post('/verify', (req, res) => {
+
+});
 
 router.post(
   '/login',
   [
-    oneOf(
-      [
-        body('username')
-          .trim().escape()
-          .notEmpty().withMessage('Username is required')
-          .isLength({ min: 3, max: 30 }).withMessage('Username must be between 3 and 30 characters long')
-          .isAlphanumeric().withMessage('Username must be alphanumeric')
-          .not().contains(' ').withMessage('Username cannot contain spaces')
-          .custom(async username => {
-            const user = await User.findOne({ username });
-            if (!user) {
-              throw new Error('User doesn\'t exists');
-            }
-          }),
-        body('email')
-          .trim().escape()
-          .notEmpty().withMessage('E-mail is required')
-          .isEmail().withMessage('Invalid E-mail address')
-          .custom(async email => {
-            const user = await User.findOne({ email });
-            if (!user) {
-              throw new Error('User doesn\'t exists');
-            }
-          }),
-      ],
-      {
-        message: 'At least Username or Email must be provided'
-      }
-    ),
+    oneOf([
+      body('username')
+        .trim().escape()
+        .notEmpty().withMessage('Username is required')
+        .isLength({ min: 3, max: 30 }).withMessage('Username must be between 3 and 30 characters long')
+        .isAlphanumeric().withMessage('Username must be alphanumeric')
+        .not().contains(' ').withMessage('Username cannot contain spaces')
+        .custom(async username => {
+          const user = await User.findOne({ username });
+          if (!user) {
+            throw new Error('User doesn\'t exists');
+          }
+        }),
+      body('email')
+        .trim().escape()
+        .notEmpty().withMessage('E-mail is required')
+        .isEmail().withMessage('Invalid E-mail address')
+        .custom(async email => {
+          const user = await User.findOne({ email });
+          if (!user) {
+            throw new Error('User doesn\'t exists');
+          }
+        }),
+    ], {
+      message: 'At least Username or Email must be provided'
+    }),
     body('password')
       .trim().escape()
       .notEmpty().withMessage('Password is required')
@@ -132,7 +135,7 @@ router.post(
   async (req, res) => {
     try {
       const errors = validationResult(req);
-      if (!errors.isEmpty())
+      if (!errors.isEmpty()) 
         return res.status(400).json({ errors: errors.array() });
 
       const { username, email, password, device } = req.body;
@@ -146,7 +149,8 @@ router.post(
         return res.status(401).json({ message: 'Invalid credentials' });
 
       const accessToken = generateAccessToken(user);
-      const refreshToken = await generateRefreshToken(user, device);
+      const { refreshToken, storeToken } = generateRefreshToken(user, device);
+      await storeToken();
 
       res.status(200).json({ accessToken, refreshToken });
     } catch (err) {
@@ -162,30 +166,32 @@ router.post(
     body('device')
       .trim().escape()
       .notEmpty().withMessage('Device is required'),
-    // gonna check headers here instead of down there
   ], 
   async (req, res) => {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader?.startsWith('Bearer '))
-      return res.status(401).json({ message: 'Missing or malformed authorization header' });
-
-    const refreshToken = authHeader.split(' ')[1];
-    
-    if (!refreshToken)
-      return res.status(401).json({ message: 'Missing refresh token' });
-
-    const { device } = req.body;
     try {
-      const payload = jwt.verify(refreshToken, config.jwt.refreshSecret);
+      const authHeader = req.headers.authorization;
+      if (!authHeader?.startsWith('Bearer '))
+        return res.status(401).json({ message: 'Missing or malformed authorization header' });
 
+      const refreshToken = authHeader.split(/Bearer /)[1];
+      if (!refreshToken)
+        return res.status(401).json({ message: 'Missing refresh token' });
+
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) 
+        return res.status(400).json({ errors: errors.array() });
+      
+      const payload = jwt.verify(refreshToken, config.jwt.refreshSecret);
+      
       const savedToken = await Token.findOne({ userId: payload.userId, token: refreshToken, device });
       if (!savedToken)
         return res.status(401).json({ message: 'Invalid refresh token' });
-
+      
       const user = await User.findById(payload.userId);
       const newAccessToken = generateAccessToken(user);
-      const newRefreshToken = await generateRefreshToken(user, device);
+      const { device } = req.body;
+      const { refreshToken: newRefreshToken, storeToken } = generateRefreshToken(user, device);
+      await storeToken();
 
       res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
     } catch (err) {
@@ -206,30 +212,39 @@ router.post('/password-reset', (req, res) => {
 
 });
 
-// i have no idea how to implement this for now
-router.post('/logout', authorization, async (req, res) => {
-  const authHeader = req.headers.authorization;
+router.post(
+  '/logout', 
+  [
+    body('device')
+      .trim().escape()
+      .notEmpty().withMessage('Device is required'),
+  ],
+  async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader?.startsWith('Bearer '))
+        return res.status(401).json({ message: 'Missing or malformed authorization header' });
 
-  if (!authHeader?.startsWith('Bearer '))
-    return res.status(401).json({ message: 'Missing or malformed authorization header' });
+      const refreshToken = authHeader.split(/Bearer /)[1];
+      if (!refreshToken)
+        return res.status(401).json({ message: 'Missing refresh token' });
 
-  const refreshToken = authHeader.split(' ')[1];
-  
-  if (!refreshToken)
-    return res.status(401).json({ message: 'Missing access token' });
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) 
+        return res.status(400).json({ errors: errors.array() });
 
-  const { device } = req.body;
-  try {
-    const result = await Token.deleteOne({ refreshToken, device });
+      const { device } = req.body;
+      const result = await Token.deleteOne({ refreshToken, device });
 
-    if (result.deletedCount === 0)
-      return res.status(401).json({ message: 'Invalid access token' });
+      if (result.deletedCount === 0)
+        return res.status(401).json({ message: 'Invalid refresh token' });
 
-    res.json({ message: 'Logged out successfully' });
-  } catch (err) {
-    res.status(500).json({ message: 'Internal Server Error' });
-    console.error(err); // will be removed in production env
+      res.status(200).json({ message: 'Session terminated successfully' });
+    } catch (err) {
+      res.status(500).json({ message: 'Internal Server Error' });
+      console.error(err); // will be removed in production env
+    }
   }
-});
+);
 
 module.exports = router;

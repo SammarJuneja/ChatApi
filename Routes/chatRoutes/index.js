@@ -8,3 +8,5 @@ const User = require("../../Database/Models/userModel.js");
 const Chat = require("../../Database/Models/chatModel.js");
 
 const router = Router();
+
+module.exports = router;

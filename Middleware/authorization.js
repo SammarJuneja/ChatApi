@@ -9,27 +9,25 @@ const authenticateJWT = async (req, res, next) => {
     return res.status(401).json({ message: `Missing or malformed authorization header` });
   }
 
-  const token = authHeader.match(/Bearer (.*)/)[1];
-
-
+  const token = authHeader.split(/Bearer /)[1];
   if (!token) {
     return res.status(401).json({ message: `Missing token in authorization header` });
   }
 
   try {
-    jwt.verify(token, config.jwt.accessSecret, async (err, user) => {
+    jwt.verify(token, config.jwt.accessSecret, async (err, { userId }) => {
       if (err) {
         return res.status(401).json({ message: 'Invalid or expired token' });
       }
 
-      // (future) blacklisted tokens: check if token is blacklisted
+      // (future) blacklisted tokens: check if  access token is blacklisted
 
-      const dbUser = await User.findById(user.userId);
+      const dbUser = await User.findById(userId);
       if (!dbUser) {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      req.user = user;
+      req.userId = userId;
       next();
     });
   } catch (err) {
