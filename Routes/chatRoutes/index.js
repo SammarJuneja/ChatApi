@@ -8,6 +8,7 @@ const router = Router();
 const User = require("../../Database/Models/userModel.js");
 const Chat = require("../../Database/Models/chatModel.js");
 
+
 router.get("/chats/:userId", authenticateJWT, async (req, res) => {
   
 });
@@ -39,4 +40,4 @@ router.post(
     }
   });
 
-const router = Router();
+module.exports = router;

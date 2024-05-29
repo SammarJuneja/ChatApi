@@ -1,74 +1,79 @@
 const { Router } = require("express");
 const config = require("../../config.js");
-const authorization = require("../../Middleware/authorization.js");
+const authenticateJWT = require("../../Middleware/authorization.js");
+const { body, validationResult, oneOf } = require('express-validator');
+
 const User = require("../../Database/Models/userModel.js");
 
 const router = Router();
 
 router.get("/users", authenticateJWT, async (req, res) => {
-    try {
-      const users = await User.find();
-      res.status(200).json({ users });
-    } catch (err) {
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
+  try {
+    const users = await User.find();
+    res.status(200).json({ users });
+  } catch (err) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 });
 
 const strongPasswordReg = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\d)(?=.*?[#?!@$%^&*-]).{8,}$/;
 
 router.post(
-    '/update-appearance',
-    [
-    body("username")
+  '/edit',
+  [
+    oneOf([
+      body("newUsername")
         .trim().escape()
         .isLength({ min: 3, max: 30 }).withMessage('Username must be between 3 and 30 characters long')
         .isAlphanumeric().withMessage('Username must be alphanumeric')
         .not().contains(' ').withMessage('Username cannot contain spaces')
         .custom(async username => {
-            const user = await User.findOne({ username });
-            if (user) {
-                throw new Error("Username is already taken");
-            }
+          const user = await User.findOne({ username });
+          if (user) throw new Error("Username is already taken");
         }),
-    body('email')
+      body('newEmail')
         .trim().escape()
         .isEmail().withMessage('Invalid E-mail address')
         .custom(async email => {
-            const user = await User.findOne({ email });
-            if (user) {
-                throw new Error("User is already used");
-            }
+          const user = await User.findOne({ email });
+          if (user) throw new Error("An account with this email already exist");
         }),
-    body('password')
-        .trim().escape()
-        .notEmpty().withMessage('Password is required')
-        .matches(strongPasswordReg)
-        .withMessage('Password must contain at least one uppercase letter, one lowercase letter, and one number, and be at least 8 characters long'),
-    ],
-    authenticateJWT, async (req, res) => { 
-        const { username, email, password } = req.body;
-        const userid = req.user.userId;
-        const userGet = await User.findOne({ _id: userid });
+    ], {
+      message: 'Must include one of the following: newUsername|newEmail'
+    })
+  ],
+  authenticateJWT, 
+  async (req, res) => { 
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) 
+      return res.status(400).json({ errors: errors.array() });
 
-        const passwordCompare = await bcrypt.compare(password, userGet.password);
+    const { newUsername, newEmail } = req.body;
 
-        if (!passwordCompare) {
-            return res.status(400).json({ error: "Incorrect password" })
-        }
+    const userId = req.userId;
+    const dbUser = await User.findOne({ _id: userId });
+    if (!dbUser)
+      return res.status(500).json({ message: "An unexpected error has occured" });
+    
+    let result = [];
+    if (newUsername && dbUser.username !== newUsername) {
+      dbUser.username = newUsername;
+      await dbUser.save();
+      result.push({ message: `Username changed to ${newUsername} successfully` });
+    } else if (newUsername) {
+      return res.status(400).json({ error: "Your new username must be different from old username"});
+    }
         
-        if (username && userGet.username !== username) {
-            await User.updateOne({ _id: userid }, { $set: { username: username } });
-            res.status(200).json({ message: `Username changed to ${username} successfully` });
-        } else if (username) {
-            return res.status(400).json({ error: "Your new username must be different from old username"});
-        }
-            
-        if (email && userGet.email !== email) {
-            await User.updateOne({ _id: userid }, { $set: { email: email } });
-            res.status(200).json({ message: `Email changed to ${email} successfully` });
-        } else if (email) {
-            return res.status(400).json({ error: "Your new email must be different from old email"});
-        }
-});
+    if (newEmail && dbUser.email !== newEmail) {
+      dbUser.email = newEmail;
+      await dbUser.save();
+      result.push({ message: `Email changed to ${newEmail} successfully` });
+    } else if (newEmail) {
+      return res.status(400).json({ error: "Your new email must be different from old email"});
+    }
+
+    res.status(200).json({ message: 'Success', data: result });
+  }
+);
 
 module.exports = router;

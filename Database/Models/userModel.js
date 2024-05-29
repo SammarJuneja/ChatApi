@@ -29,17 +29,23 @@ const userSchema = new mongoose.Schema({
         type: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
-        }]
+        }],
+        default: []
     },
     groups: {
         type: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Chat'
-        }]
+        }],
+        default: []
     },
     bio: {
         type: String,
         default: "Just joined"
+    },
+    verified: {
+        type: Boolean,
+        default: false
     }
 });
 
