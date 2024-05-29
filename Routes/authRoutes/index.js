@@ -199,7 +199,7 @@ router.post(
         await Token.deleteOne({ refreshToken });
         res.status(401).json({ message: 'Refresh token expired' });
       } else if (err instanceof jwt.JsonWebTokenError) {
-        res.status(401).json({ message: err });
+        res.status(401).json({ message: 'Invalid refresh token' });
       } else {
         res.status(500).json({ message: 'Internal Server error' });
       }
@@ -235,7 +235,7 @@ router.post(
 
       const { device } = req.body;
       const result = await Token.deleteOne({ refreshToken, device });
-
+      console.log({ device, result });
       if (result.deletedCount === 0)
         return res.status(401).json({ message: 'Invalid refresh token' });
 
