@@ -234,7 +234,7 @@ router.post(
         return res.status(400).json({ errors: errors.array() });
 
       const { device } = req.body;
-      const result = await Token.deleteOne({ refreshToken, device });
+      const result = await Token.deleteOne({ token: refreshToken, device });
       console.log(refreshToken);
       if (result.deletedCount === 0)
         return res.status(401).json({ message: 'Invalid refresh token' });
