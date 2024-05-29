@@ -186,7 +186,7 @@ router.post(
       const { device } = req.body;
       const savedToken = await Token.findOne({ userId: payload.userId, token: refreshToken, device });
       if (!savedToken)
-        return res.status(401).json({ message: 'Invalid refresh token bro' });
+        return res.status(401).json({ message: 'Invalid refresh token' });
       
       const user = await User.findById(payload.userId);
       const newAccessToken = generateAccessToken(user);
@@ -199,7 +199,7 @@ router.post(
         await Token.deleteOne({ refreshToken });
         res.status(401).json({ message: 'Refresh token expired' });
       } else if (err instanceof jwt.JsonWebTokenError) {
-        res.status(401).json({ message: 'Invalid refresh token' });
+        res.status(401).json({ message: err });
       } else {
         res.status(500).json({ message: 'Internal Server error' });
       }
