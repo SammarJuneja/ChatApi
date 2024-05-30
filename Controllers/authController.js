@@ -42,6 +42,7 @@ exports.login = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
 
     const { username, email, password, device } = req.body;
+    console.log(expiresIn)
 
     const user = await authenticateUser(username, email, password);
     const tokensObj = await generateTokens(user, device);

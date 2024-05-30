@@ -5,8 +5,8 @@ const User = require('../Database/Models/userModel');
 const BlacklistedToken = require('../Database/Models/blacklistedTokenModel');
 
 exports.generateTokens = async (user, device) => {
-  const accessToken = jwt.sign({ userId: user._id }, config.jwt.accessSecret, { expiresIn: config.jwt.accessExpiresIn });
-  const refreshToken = jwt.sign({ userId: user._id }, config.jwt.refreshSecret, { expiresIn: config.jwt.refreshExpiresIn });
+  const accessToken = jwt.sign({ userId: user._id }, config.jwt.accessSecret, { expiresIn: config.jwt.accessTokenExpiry });
+  const refreshToken = jwt.sign({ userId: user._id }, config.jwt.refreshSecret, { expiresIn: config.jwt.refreshTokenExpiry });
 
   await new Token({ userId: user._id, token: refreshToken, device }).save();
 
