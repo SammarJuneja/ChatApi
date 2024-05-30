@@ -28,11 +28,11 @@ exports.register = async (req, res) => {
 }
 
 exports.verify = async (req, res) => {
-try {
-  
-} catch (error) {
-  
-}
+  try {
+    
+  } catch (error) {
+    
+  }
 }
 
 exports.login = async (req, res) => {
@@ -90,7 +90,7 @@ exports.passwordReset = async (req, res) => {
     const { email } = req.body;
     const userGet = await User.findOne({ email });
     if (!userGet) {
-      res.status(400).json({ error: "User with that email doesn\'t exist" });
+      res.status(400).json({ error: "User with that email doesn't exist" });
     }
     // need nodemailer setup
   } catch (error) {
