@@ -1,4 +1,4 @@
-const { Router } = require('express');
+const { Router, query } = require('express');
 const { body, oneOf } = require('express-validator');
 const router = Router();
 
@@ -44,7 +44,15 @@ router.post(
   register
 );
 
-router.post('/verify', verify);
+router.post(
+  '/verify', 
+  [
+    query('token')
+      .trim().escape()
+      .notEmpty().withMessage('Verification token is required')
+  ],
+  verify
+);
 
 router.post(
   '/login',

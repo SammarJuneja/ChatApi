@@ -1,10 +1,9 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { validationResult } = require("express-validator");
-const Token = require('../Database/Models/tokenModel.js');
+
 const { generateTokens, refreshTokens, invalidateTokens } = require('../Services/tokenService.js');
 const { createUser, authenticateUser } = require('../Services/authService.js');
-const { expiresIn } = require("../config.js");
-
 
 // SECURITY: MUST implement token blacklisting
 //             * blacklist tokens yet to expire of logged out/changed tokens
@@ -15,12 +14,14 @@ exports.register = async (req, res) => {
     if (!errors.isEmpty()) 
       return res.status(400).json({ errors: errors.array() });
 
-    const { username, email, password, device } = req.body;
+    const { username, email, password } = req.body;
 
-    const user = await createUser(username, email, password);
-    const tokensObj = await generateTokens(user, device);
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    await createUser(username, email, password, verificationToken);
 
-    res.status(200).json(tokensObj);
+    await sendVerificationEmail(email, verificationToken);
+
+    res.status(201).json({ message: 'User account created successfully' });
   } catch (err) {
     await res.status(500).json({ message: err.message });
     console.error(err); // will remove in production env
@@ -28,10 +29,14 @@ exports.register = async (req, res) => {
 }
 
 exports.verify = async (req, res) => {
+  const { token } = req.query;
+
   try {
-    
+    await verifyUserEmail(token);
+
+    res.status(200).json({ message: 'Email verified successfully' });
   } catch (error) {
-    
+    res.status(500).json({ message: 'Internal server error' });
   }
 }
 
@@ -42,7 +47,6 @@ exports.login = async (req, res) => {
       return res.status(400).json({ errors: errors.array() });
 
     const { username, email, password, device } = req.body;
-    console.log(expiresIn)
 
     const user = await authenticateUser(username, email, password);
     const tokensObj = await generateTokens(user, device);

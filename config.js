@@ -6,4 +6,9 @@ module.exports = {
     accessTokenExpiry: '30m',
     refreshTokenExpiry: '7d',
   },
+  nodemailer: {
+    service: 'Gmail',
+    email: process.env['EMAIL'],
+    password: process.env['EMAIL_PASSWORD'],
+  }
 }

@@ -1,10 +1,10 @@
 const bcrypt = require('bcrypt');
 const User = require('../Database/Models/userModel');
 
-exports.createUser = async (username, email, password) => {
+exports.createUser = async (username, email, password, verificationToken) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
-  return new User({ username, email, password: hashedPassword }).save();
+  return new User({ username, email, password: hashedPassword, verificationToken }).save();
 };
 
 exports.authenticateUser = async (username, email, password) => {
