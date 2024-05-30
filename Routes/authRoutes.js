@@ -112,7 +112,7 @@ router.post(
       if (!userEmail) {
         throw new Error("User doesn\'t exist")
       }
-    });
+    }),
   ], passwordReset);
 
 router.post(
