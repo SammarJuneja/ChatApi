@@ -1,5 +1,5 @@
-const { Router, query } = require('express');
-const { body, oneOf } = require('express-validator');
+const { Router } = require('express');
+const { body, query, oneOf } = require('express-validator');
 const router = Router();
 
 const User = require('../Database/Models/userModel.js');
