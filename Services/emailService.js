@@ -18,7 +18,7 @@ exports.sendVerificationEmail = async (userEmail, verificationToken) => {
       from: email,
       to: userEmail,
       subject: 'Email Verification',
-      text: `Please verify your email by clicking the following link: http://localhost:3000/verify?token=${verificationToken}`,
+      text: `Please verify your email by clicking the following link: ${domainUrl}/api/v2/auth/verify?token=${verificationToken}`,
     });
   } catch (error) {
     console.error(error);
@@ -31,7 +31,7 @@ exports.sendPasswordResetEmail = async (userEmail, resetToken) => {
       from: email,
       to: userEmail,
       subject: 'Password Reset',
-      text: `Please reset your password by clicking the following link: http://localhost:3000/password-reset?token=${resetToken}`,
+      text: `Please reset your password by clicking the following link: ${domainUrl}/api/v2/auth/password-reset?token=${resetToken}`,
     });
   } catch (error) {
     console.error(error);

@@ -8,6 +8,7 @@ module.exports = {
   },
   nodemailer: {
     service: 'Gmail',
+    domainUrl: process.env['DOMAIN_URL'],
     email: process.env['EMAIL'],
     password: process.env['EMAIL_PASSWORD'],
   }
