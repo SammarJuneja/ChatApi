@@ -8,8 +8,8 @@ exports.startChat = async (req, res) => {
     const users = [loggedUser, userid]
     console.log(users)
     const chatGet = await Chat.find({
-      $in: {
-        users
+      _id: {
+        $in: users
       }
     });
     if (chatGet.length === 2) {
