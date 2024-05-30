@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-
+const { validationResult } = require("express-validator");
 const Token = require('../Database/Models/tokenModel.js');
 const { generateTokens, refreshTokens, invalidateTokens } = require('../Services/tokenService.js');
 const { createUser, authenticateUser } = require('../Services/authService.js');
