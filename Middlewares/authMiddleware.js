@@ -16,9 +16,11 @@ const authenticateJWT = async (req, res, next) => {
   }
 
   try {
-    jwt.verify(token, config.jwt.accessSecret, async (err, { userId }) => {
+    jwt.verify(token, config.jwt.accessSecret, async (err, tok) => {
       if (err) 
         return res.status(401).json({ message: 'Invalid or expired token' });
+        
+        const { userId } = tok;
 
       const blacklistedToken = await BlacklistedToken.findOne({ token });
       if (blacklistedToken)
