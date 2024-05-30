@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const authenticateJWT = require("../Middlewares/authMiddleware.js");
 const { body, oneOf } = require('express-validator');
+const { expiresIn } = require("../config.js")
 
 const User = require("../Database/Models/userModel.js");
 const { getAllUsers, modifyUser } = require("../Controllers/userController.js");

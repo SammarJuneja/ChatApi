@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const Token = require('../Database/Models/tokenModel.js');
 const { generateTokens, refreshTokens, invalidateTokens } = require('../Services/tokenService.js');
 const { createUser, authenticateUser } = require('../Services/authService.js');
+const { expiresIn } = require("../config.js");
 
 
 // SECURITY: MUST implement token blacklisting
@@ -27,7 +28,11 @@ exports.register = async (req, res) => {
 }
 
 exports.verify = async (req, res) => {
-
+try {
+  
+} catch (error) {
+  
+}
 }
 
 exports.login = async (req, res) => {
