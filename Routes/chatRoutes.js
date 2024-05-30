@@ -3,7 +3,7 @@ const authenticateJWT = require("../Middlewares/authMiddleware.js");
 const { body } = require('express-validator');
 const router = Router();
 
-const { startChats } = require('../Controllers/chatController.js');
+const { startChat } = require('../Controllers/chatController.js');
 
 // idk what this endpoint is for so i am leaving it till we get closer to client
 router.get(
