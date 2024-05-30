@@ -1,7 +1,7 @@
 const User = require('../Database/Models/userModel.js');
 const Chat = require('../Database/Models/chatModel.js');
 
-exports.startChat = (req, res) => {
+exports.startChat = async (req, res) => {
   try {
     const { participants } = req.body;
     const chatGet = await Chat.find({
