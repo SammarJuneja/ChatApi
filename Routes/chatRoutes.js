@@ -17,8 +17,8 @@ router.get(
 router.post(
   "/start-chat",
   [
-    body("participants")
-    .isArray({ min: 2 }).withMessage("Two participants weren\'t found"),
+    body("userid")
+    .notEmpty().withMessage("User was not found"),
   ],
   authenticateJWT, 
   startChat
