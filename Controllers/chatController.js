@@ -16,7 +16,7 @@ exports.startChat = async (req, res) => {
       res.status(200).json({ chatGet });
     } else {
       const newChat = new Chat({
-        users
+        participants: users
       });
       await newChat.save()
       res.status(200).json({ newChat });
