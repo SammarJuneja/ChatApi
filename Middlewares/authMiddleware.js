@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const config = require("../config");
 const User = require("../Database/Models/userModel");
+const BlacklistedToken = require("../Database/Models/blacklistedTokenModel");
 
 const authenticateJWT = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -16,11 +17,12 @@ const authenticateJWT = async (req, res, next) => {
 
   try {
     jwt.verify(token, config.jwt.accessSecret, async (err, { userId }) => {
-      if (err) {
+      if (err) 
         return res.status(401).json({ message: 'Invalid or expired token' });
-      }
 
-      // (future) blacklisted tokens: check if  access token is blacklisted
+      const blacklistedToken = await BlacklistedToken.findOne({ token });
+      if (blacklistedToken)
+        return res.status(401).json({ message: 'Invalid or expired token' });
 
       const dbUser = await User.findById(userId);
       if (!dbUser) {

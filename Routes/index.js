@@ -1,9 +1,9 @@
 const { Router } = require('express');
 const router = Router();
 
-const authRoutes = require("./authRoutes");
-const userRoutes = require("./userRoutes");
-const chatRoutes = require("./chatRoutes");
+const authRoutes = require("./authRoutes.js");
+const userRoutes = require("./userRoutes.js");
+const chatRoutes = require("./chatRoutes.js");
 
 // Middleware for handling errors
 const errorHandler = (err, req, res, next) => {
