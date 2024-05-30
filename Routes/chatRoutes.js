@@ -13,11 +13,15 @@ router.get(
   
 });
 
-// Does not work tight now
+// Does not work right now
 router.post(
-  "/start-chat", 
+  "/start-chat",
+  [
+    body("participants")
+    .isArray({ min: 2 }).withMessage("Two participants weren\'t found")
+  ],
   authenticateJWT, 
-  startChats
+  startChat
 );
 
 module.exports = router;

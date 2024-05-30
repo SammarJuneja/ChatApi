@@ -80,7 +80,17 @@ exports.token = async (req, res) => {
 }
 
 exports.passwordReset = async (req, res) => {
-
+  try {
+    const { email } = req.body;
+    const userGet = await User.findOne({ email });
+    if (!userGet) {
+      res.status(400).json({ error: "User with that email doesn\'t exist" });
+    }
+    // need nodemailer setup
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({error: "Internal server error" });
+  }
 }
 
 exports.logout = async (req, res) => {

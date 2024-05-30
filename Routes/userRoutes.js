@@ -3,7 +3,7 @@ const authenticateJWT = require("../Middlewares/authMiddleware.js");
 const { body, oneOf } = require('express-validator');
 
 const User = require("../Database/Models/userModel.js");
-const { getAllUsers, modifyUSer } = require("../Controllers/userController.js");
+const { getAllUsers, modifyUser } = require("../Controllers/userController.js");
 
 const router = Router();
 
@@ -38,7 +38,7 @@ router.post(
     })
   ],
   authenticateJWT, 
-  modifyUSer
+  modifyUser
 );
 
 module.exports = router;

@@ -67,7 +67,8 @@ router.post(
         .notEmpty().withMessage('E-mail is required')
         .isEmail().withMessage('Invalid E-mail address')
         .custom(async email => {
-          const user = await User.findOne({ email });
+          const user = await User.findOne({ email
+          });
           if (!user) {
             throw new Error('User doesn\'t exists');
           }
@@ -97,7 +98,22 @@ router.post(
   token
 );
 
-router.post('/password-reset', passwordReset);
+router.post(
+  '/password-reset',
+  [
+    body("email")
+    .trim().escape()
+    .notEmpty().withMessage("Email is not provided")
+    .isEmail().withMessage("Email is invalid")
+    .cusom(async email => {
+      const userEmail = await User.findOne({
+        email
+      });
+      if (!userEmail) {
+        throw new Error("User doesn\'t exist")
+      }
+    });
+  ], passwordReset);
 
 router.post(
   '/logout', 
