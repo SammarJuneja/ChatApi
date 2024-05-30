@@ -105,15 +105,17 @@ router.post(
     .trim().escape()
     .notEmpty().withMessage("Email is not provided")
     .isEmail().withMessage("Email is invalid")
-    .cusom(async email => {
+    .custom(async email => {
       const userEmail = await User.findOne({
         email
-      });
+      })
       if (!userEmail) {
         throw new Error("User doesn\'t exist")
       }
     }),
-  ], passwordReset);
+  ],
+  passwordReset
+);
 
 router.post(
   '/logout', 
