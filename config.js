@@ -1,4 +1,9 @@
+if (process.env['VERCEL_ENV'] !== 'production') {
+  require('dotenv').config();
+}
+
 module.exports = {
+  port: process.env['PORT'] || 4000,
   mongoURI: process.env['MONGODB_URI'],
   jwt: {
     accessSecret: process.env['JWT_ACCESS_SECRET'],

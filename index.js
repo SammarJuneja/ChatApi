@@ -1,7 +1,6 @@
 const express = require("express");
 const app = express();
 const connectDB = require('./Database/index.js');
-require("dotenv").config();
 connectDB();
 
 app.use(express.json());

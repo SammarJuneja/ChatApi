@@ -118,7 +118,7 @@ router.post(
         email
       })
       if (!userEmail) {
-        throw new Error("User doesn\'t exist")
+        throw new Error("User doesn't exist")
       }
     }),
   ],
