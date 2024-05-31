@@ -11,10 +11,16 @@ const messageSchema = new mongoose.Schema({
     required: true,
     ref: 'User'
   },
-  content: {
+  message: {
     type: String,
     required: true
   },
+  attachment: {
+    type: string,
+  },
+  reaction: [{
+    type: String
+  }],
   status: {
     type: String,
     enum: ['sent', 'read'],
