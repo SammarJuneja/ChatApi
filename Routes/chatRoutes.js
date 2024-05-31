@@ -8,7 +8,12 @@ const Chat = require('../Database/Models/chatModel.js');
 
 const router = Router();
 
-const { startChat, sendMessage, editMessage } = require('../Controllers/chatController.js');
+const {
+  startChat,
+  sendMessage,
+  editMessage,
+  addReaction
+} = require('../Controllers/chatController.js');
 
 // idk what this endpoint is for so i am leaving it till we get closer to client
 router.get(
@@ -69,5 +74,27 @@ router.put(
   authenticateJWT,
   editMessage
   );
+  
+router.put(
+  "/add-reaction"
+  [
+    body("messageId")
+    .trim().escape()
+    .notEmpty().withMessage("MessageId was not provided")
+    .custom(async chatId => {
+      await Message.findOne({
+        _id: messageId
+      });
+      if (!messageGet) {
+        res.status(404).json({ message: "Message with provided id was not found" })
+      }
+    }),
+    body("reaction")
+    .trim().escape()
+    .notEmpty().withMessage("Cannot add empty reaction"),
+    ],
+    authenticateJWT,
+    addReaction
+    )
 
 module.exports = router;

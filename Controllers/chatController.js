@@ -58,11 +58,34 @@ exports.editMessage = async (req, res) => {
     if (!messageGet) {
       res.status(404).json({ error: "Message was not found"});
     } else {
-      const messageGet = Message.updateOne({
+      await Message.updateOne({
         _id: messageId
       }, {
         $set: {
           message
+        }
+      });
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: "Internal server error" })
+  }
+}
+
+exports.addReaction = async (req, res) => {
+  try {
+    const { messageId, reaction } = req.body;
+    const messageGet = Message.findOne({
+      _id: messageId
+    });
+    if (!messageGet) {
+      res.status(404).json({ error: "Message was not found"});
+    } else {
+      await Message.updateOne({
+        _id: messageId
+      }, {
+        $push: {
+          reactions: reaction
         }
       });
     }
