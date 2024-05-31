@@ -51,8 +51,23 @@ exports.sendMessage = async (req, res) => {
 
 exports.editMessage = async (req, res) => {
   try {
-
+    const { messageId, message } = req.body;
+    const messageGet = Message.findOne({
+      _id: messageId
+    });
+    if (!messageGet) {
+      res.status(404).json({ error: "Message was not found"});
+    } else {
+      const messageGet = Message.updateOne({
+        _id: messageId
+      }, {
+        $set: {
+          message
+        }
+      });
+    }
   } catch (error) {
-    
+    console.log(error)
+    res.status(500).json({ error: "Internal server error" })
   }
 }

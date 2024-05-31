@@ -1,9 +1,14 @@
 const { Router } = require("express");
-const authenticateJWT = require("../Middlewares/authMiddleware.js");
 const { body } = require('express-validator');
+const authenticateJWT = require("../Middlewares/authMiddleware.js");
+
+const Message = require('../Database/Models/messageModel.js');
+const User = require('../Database/Models/userModel.js');
+const Chat = require('../Database/Models/chatModel.js');
+
 const router = Router();
 
-const { startChat, sendMessage } = require('../Controllers/chatController.js');
+const { startChat, sendMessage, editMessage } = require('../Controllers/chatController.js');
 
 // idk what this endpoint is for so i am leaving it till we get closer to client
 router.get(
@@ -44,5 +49,25 @@ router.post(
   authenticateJWT,
   sendMessage
 );
+
+router.put(
+  "/edit-message"
+  [
+    body("messageId")
+    .trim().escape()
+    .notEmpty().withMessage("MessageId was not provided")
+    .custom(async chatId => {
+      const messageGet = await Message.findOne({
+        _id: messageId
+      });
+      if (!messageGet) {
+        res.status(404).json({ message: "Message with provided id was not found" })
+      }
+    }),
+    body("message"),
+  ],
+  authenticateJWT,
+  editMessage
+  );
 
 module.exports = router;
