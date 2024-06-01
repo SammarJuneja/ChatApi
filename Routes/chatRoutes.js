@@ -34,7 +34,7 @@ router.post(
 );
 
 router.post(
-  "/send-message"
+  "/send-message",
   [
     body("chat")
     .trim().escape()
@@ -56,7 +56,7 @@ router.post(
 );
 
 router.put(
-  "/edit-message"
+  "/edit-message",
   [
     body("messageId")
     .trim().escape()
