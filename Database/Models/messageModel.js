@@ -15,9 +15,9 @@ const messageSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  attachment: {
+  attachment: [{
     type: String,
-  },
+  }],
   reaction: [{
     type: String
   }],
