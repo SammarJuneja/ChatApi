@@ -44,7 +44,7 @@ router.post(
   register
 );
 
-router.post(
+router.get(
   '/verify', 
   [
     query('token')
