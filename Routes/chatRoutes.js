@@ -77,7 +77,7 @@ router.put(
   );
   
 router.put(
-  "/add-reaction"
+  "/add-reaction",
   [
     body("messageId")
     .trim().escape()
