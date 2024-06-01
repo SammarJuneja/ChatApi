@@ -2,6 +2,25 @@ const Message = require('../Database/Models/messageModel.js');
 const User = require('../Database/Models/userModel.js');
 const Chat = require('../Database/Models/chatModel.js');
 
+exports.getUserChats = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const userGet = await Chat.find({
+      participants: {
+        $in: userId
+      }
+    });
+    if (!userGet) {
+      res.status(404).json({ error: "User has no chats"});
+    } else {
+      res.status(200).json({ userGet });
+    }
+  } catch {
+    console.log(error)
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
 exports.startChat = async (req, res) => {
   try {
     const { userid } = req.body;
@@ -49,6 +68,29 @@ exports.sendMessage = async (req, res) => {
   }
 }
 
+exports.addReaction = async (req, res) => {
+  try {
+    const { messageId, reaction } = req.body;
+    const messageGet = Message.findOne({
+      _id: messageId
+    });
+    if (!messageGet) {
+      res.status(404).json({ error: "Message was not found"});
+    } else {
+      await Message.updateOne({
+        _id: messageId
+      }, {
+        $push: {
+          reactions: reaction
+        }
+      });
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: "Internal server error" })
+  }
+}
+
 exports.editMessage = async (req, res) => {
   try {
     const { messageId, message } = req.body;
@@ -72,25 +114,17 @@ exports.editMessage = async (req, res) => {
   }
 }
 
-exports.addReaction = async (req, res) => {
+exports.deleteMessage = async (req, res) => {
   try {
-    const { messageId, reaction } = req.body;
-    const messageGet = Message.findOne({
-      _id: messageId
-    });
-    if (!messageGet) {
-      res.status(404).json({ error: "Message was not found"});
+    const { messageId } = req.params;
+    const messageGet = await Message.deleteOne({ _id: messageId });
+    if (messageGet) {
+      res.status(200).send("Message was deleted successfully");
     } else {
-      await Message.updateOne({
-        _id: messageId
-      }, {
-        $push: {
-          reactions: reaction
-        }
-      });
+      res.status(404).json({ error: "Message was not found" });
     }
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: "Internal server error" })
+    res.status(500).json({ error: "Internal server error" });
   }
 }

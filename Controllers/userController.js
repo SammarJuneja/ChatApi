@@ -1,6 +1,22 @@
 const { validationResult } = require("express-validator");
 const User = require("../Database/Models/userModel");
 
+exports.getUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const userGet = await User.findOne({
+      _id: userId
+    });
+    if (!userGet) {
+      res.status(404).json({ error: "User not found" });
+    } else {
+      res.status(200).json({ userGet });
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find();

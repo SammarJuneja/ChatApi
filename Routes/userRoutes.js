@@ -4,9 +4,15 @@ const { body, oneOf } = require('express-validator');
 const { expiresIn } = require("../config.js")
 
 const User = require("../Database/Models/userModel.js");
-const { getAllUsers, modifyUser } = require("../Controllers/userController.js");
+const { getUser, getAllUsers, modifyUser } = require("../Controllers/userController.js");
 
 const router = Router();
+
+router.get(
+  "/user:userId", 
+  authenticateJWT,
+  getUser
+);
 
 router.get(
   "/users", 
