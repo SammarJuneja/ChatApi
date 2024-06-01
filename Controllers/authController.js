@@ -3,7 +3,8 @@ const crypto = require('crypto');
 const { validationResult } = require("express-validator");
 
 const { generateTokens, refreshTokens, invalidateTokens } = require('../Services/tokenService.js');
-const { createUser, authenticateUser, sendVerificationEmail } = require('../Services/authService.js');
+const { createUser, authenticateUser } = require('../Services/authService.js');
+const { sendVerificationEmail, sendPasswordResetEmail, verifyUserEmail } = require('../Services/emailService.js');
 
 // SECURITY: MUST implement token blacklisting
 //             * blacklist tokens yet to expire of logged out/changed tokens
