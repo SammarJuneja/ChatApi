@@ -66,10 +66,11 @@ router.put(
         _id: messageId
       });
       if (!messageGet) {
-        res.status(404).json({ message: "Message with provided id was not found" })
+        throw new Error("Message with provided id was not found")
       }
     }),
-    body("message"),
+    body("message")
+    .trim().escape(),
   ],
   authenticateJWT,
   editMessage
