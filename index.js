@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const { port } = require('./config.js');
 const connectDB = require('./Database/index.js');
 connectDB();
 
@@ -50,4 +51,6 @@ app.post("sendmessage/:userid", authorizatonToken, async (req, res) => {
 });
 // */
 
-module.exports = app;
+app.listen(port, () => {
+  console.log(`Server is up and running on http://localhost:${port}/`)
+})
