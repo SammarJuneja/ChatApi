@@ -62,6 +62,8 @@ exports.sendMessage = async (req, res) => {
         message,
         sender: req.userId
       });
+      await newMessage.save();
+      res.status(200).json({ newMessage })
     }
   } catch (error) {
     res.status(500).json({ error: "Internal server error" })
@@ -81,9 +83,10 @@ exports.addReaction = async (req, res) => {
         _id: messageId
       }, {
         $push: {
-          reactions: reaction
+          reaction: reaction
         }
       });
+      res.status(200).send(`Reaction was added successfully`);
     }
   } catch (error) {
     console.log(error)
@@ -107,6 +110,7 @@ exports.editMessage = async (req, res) => {
           message
         }
       });
+      res.status(200).send(`Message was edited successfully`);
     }
   } catch (error) {
     console.log(error)

@@ -1,11 +1,11 @@
 const nodemailer = require('nodemailer');
 const { nodemailer: config } = require('../config.js');
-const { service, email, password } = config;
+const { service, email, password, domainUrl } = config;
 
 const User = require('../Database/Models/userModel.js');
 
 const transporter = nodemailer.createTransport({
-  service: service,
+  service: "Gmail",
   auth: {
     user: email,
     pass: password,
@@ -13,6 +13,7 @@ const transporter = nodemailer.createTransport({
 });
 
 exports.sendVerificationEmail = async (userEmail, verificationToken) => {
+  console.log(email, domainUrl)
   try {
     await transporter.sendMail({
       from: email,

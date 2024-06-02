@@ -17,6 +17,9 @@ const {
   deleteMessage
 } = require('../Controllers/chatController.js');
 
+// chat id 665c52fa0e66697107164be2
+//  user id 665c52570e66697107164bda
+
 // This endpoint is to get chats of a user
 router.get(
   "/chat/:userId", 
@@ -28,7 +31,15 @@ router.post(
   "/start-chat",
   [
     body("userid")
-    .notEmpty().withMessage("User was not found"),
+    .notEmpty().withMessage("User was not found")
+    .custom(async userid => {
+      const userGet = await User.findOne({
+        _id: userid
+      });
+      if (!userGet) {
+        res.status(404).json({ message: "User with provided id was not found" });
+      }
+    }),
   ],
   authenticateJWT, 
   startChat
@@ -37,7 +48,7 @@ router.post(
 router.post(
   "/send-message",
   [
-    body("chat")
+    body("chatId")
     .trim().escape()
     .notEmpty().withMessage("ChatId was not provided")
     .custom(async chatId => {
@@ -45,7 +56,7 @@ router.post(
         _id: chatId
       });
       if (!chatGet) {
-        res.status(404).json({ message: "Chat with provided id was not found" })
+        res.status(404).json({ message: "Chat with provided id was not found" });
       }
     }),
     body("message")
@@ -100,7 +111,7 @@ router.put(
 );
 
 router.delete(
-  "/delete-message:messageId",
+  "/delete-message/:messageId",
   authenticateJWT,
   deleteMessage
 );

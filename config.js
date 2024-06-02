@@ -1,6 +1,4 @@
-if (process.env['VERCEL_ENV'] !== 'production') {
-  require('dotenv').config();
-}
+require('dotenv').config();
 
 module.exports = {
   port: process.env['PORT'] || 4000,
