@@ -8,7 +8,7 @@ app.use(express.json());
 
 const Routes = require('./Routes');
 
-app.use('/api/v2', Routes);
+app.use('/api/v1', Routes);
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
