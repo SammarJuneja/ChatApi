@@ -5,7 +5,7 @@ const { service, email, password, domainUrl } = config;
 const User = require('../Database/Models/userModel.js');
 
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
+  service: service,
   auth: {
     user: email,
     pass: password,
