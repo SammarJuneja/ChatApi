@@ -3,3 +3,4 @@ node_modules
 .replit
 replit.nix
 *.http
+.vercel
