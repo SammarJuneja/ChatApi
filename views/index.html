@@ -3,13 +3,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="This is the ChatApi">
+    <meta name="image" content="">
     <title>ChatApi</title>
 </head>
 <style>
     body {
         margin: 0;
         padding: 0;
-        background-color: rgb(45, 45, 99);
+        background-color: #16181e;
     }
     header {
         color: white;
@@ -18,13 +19,17 @@
         padding: 1px;
         border-bottom: 1px solid gray;
         font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
-        background-color: rgb(21, 14, 67);
+        background-color: #16181f;
     }
     h1 {
         text-align: center;
-        color: black;
+        color: gray;
         font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
         margin-bottom: 5px;
+    }
+    .main {
+      display: flex;
+      justify-content: center;
     }
     .endpoints {
         display: grid;
@@ -36,7 +41,7 @@
     <header>
         <h2>Welcome to the ChatApi</h2>
     </header>
-    <div>
+    <div class="main">
         <h1>Endpoints</h1>
         <div class="endpoints">
           <h3>/auth/register</h3>
