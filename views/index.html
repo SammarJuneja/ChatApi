@@ -2,7 +2,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="description" content="This is the ChatApi">
+    <title>ChatApi</title>
 </head>
 <style>
     body {
@@ -25,11 +26,6 @@
         font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
         margin-bottom: 5px;
     }
-    a {
-        text-decoration: none;
-        color: white;
-        font-family: 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;
-    }
     .endpoints {
         display: grid;
         justify-content: center;
@@ -40,13 +36,24 @@
     <header>
         <h2>Welcome to the ChatApi</h2>
     </header>
-    <div >
+    <div>
         <h1>Endpoints</h1>
         <div class="endpoints">
-            <a href=""><h3>/signup</h3></a>
-            <a href=""><h3>/login</h3></a>
-            <a href=""><h3>/user/:id</h3></a>
-            <a href=""><h3>/sendmessage/:userid</h3></a>
+          <h3>/auth/register</h3>
+          <h3>/auth/login</h3>
+          <h3>/auth/password-reset</h3>
+          <h3>/auth/verify</h3>
+          <h3>/auth/token</h3>
+          <h3>/auth/logout</h3>
+          <h3>/chat/start-chat</h3>
+          <h3>/chat/chat/:userid</h3>
+          <h3>/chat/sendmessage</h3>
+          <h3>/chat/add-reaction</h3>
+          <h3>/chat/edit-message</h3>
+          <h3>/chat/delete-message/:messageid</h3>
+          <h3>/user/user/:userid</h3>
+          <h3>/user/users</h3>
+          <h3>/user/edit</h3>
         </div>
     </div>
 </body>
